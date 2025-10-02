@@ -1,4 +1,4 @@
-# Youtube-video-generator-
+# Youtube- video idea -generator-
 Flask Youtube video Idea Generator 
 AI-Powered YouTube Content Generator
 This is a simple web application that uses LangChain and the OpenAI API to generate ideas for YouTube videos. Based on a user-provided topic, it generates a catchy title, a script outline, and relevant hashtags, returning the result in a structured JSON format.
