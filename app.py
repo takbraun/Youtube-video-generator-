@@ -6,9 +6,14 @@ from pydantic import BaseModel, Field
 import os
 
 # --- Environment Setup ---
+# It's recommended to set the API key in your environment variables.
 api_key = os.environ.get("OPENAI_API_KEY")
 if not api_key:
+    # This is a fallback for local testing if the env var isn't set,
+    # but it's not recommended for production.
     print("WARNING: OPENAI_API_KEY environment variable not set.")
+    # You could add a hardcoded key here for testing, e.g., api_key = "sk-..."
+    # but be careful not to commit it to version control.
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -22,6 +27,7 @@ class YouTubeVideo(BaseModel):
     hashtags: list[str] = Field(description="a list of 5-7 relevant YouTube hashtags")
 
 # 2. LLM Model
+# Use a specific model version for more consistent outputs
 model = ChatOpenAI(temperature=0.7, model_name="gpt-3.5-turbo", api_key=api_key)
 
 # 3. Create the Parsers
@@ -64,11 +70,17 @@ def generate():
             return jsonify({"error": "Topic is required"}), 400
 
         topic = data['topic']
+        # Invoke the chain with the topic
         result = chain.invoke({"topic": topic})
+        # The parser returns a Pydantic object, so we convert it to a dict
         return jsonify(result.dict())
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Provide a more generic error to the user for security
+        print(f"An error occurred: {e}") # Log the detailed error for debugging
+        return jsonify({"error": "An internal error occurred."}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # removed Cannot get / message
+    
